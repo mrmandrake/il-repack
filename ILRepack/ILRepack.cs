@@ -398,7 +398,7 @@ namespace ILRepacking
 
         private void ReadInputAssemblies()
         {
-            MergedAssemblyFiles = InputAssemblies.SelectMany(x => ResolveFile(x)).ToList();
+            MergedAssemblyFiles = InputAssemblies.SelectMany(x => ResolveFile(x)).Distinct().ToList();
             OtherAssemblies = new List<AssemblyDefinition>();
             // TODO: this could be parallelized to gain speed
             bool mergedDebugInfo = false;
@@ -710,7 +710,7 @@ namespace ILRepacking
             var fixator = new ReferenceFixator(this);
             if (PrimaryAssemblyMainModule.EntryPoint != null)
             {
-                TargetAssemblyMainModule.EntryPoint = fixator.Fix(Import(PrimaryAssemblyDefinition.EntryPoint), null).Resolve();
+                TargetAssemblyMainModule.EntryPoint = fixator.Fix(Import(PrimaryAssemblyDefinition.EntryPoint)).Resolve();
             }
 
             INFO("Fixing references");
@@ -725,9 +725,9 @@ namespace ILRepacking
                 fixator.FixMethodVisibility(r);
             }
             fixator.FixReferences(TargetAssemblyDefinition.MainModule.ExportedTypes);
-            fixator.FixReferences(TargetAssemblyDefinition.CustomAttributes, null);
-            fixator.FixReferences(TargetAssemblyDefinition.SecurityDeclarations, null);
-            fixator.FixReferences(TargetAssemblyMainModule.CustomAttributes, null);
+            fixator.FixReferences(TargetAssemblyDefinition.CustomAttributes);
+            fixator.FixReferences(TargetAssemblyDefinition.SecurityDeclarations);
+            fixator.FixReferences(TargetAssemblyMainModule.CustomAttributes);
 
             // final reference cleanup (Cecil Import automatically added them)
             foreach (AssemblyDefinition asm in MergedAssemblies)
@@ -1136,7 +1136,7 @@ namespace ILRepacking
             {
                 foreach (var res in rr)
                 {
-                    if (res.type == "ResourceTypeCode.String")
+                    if (res.type == "ResourceTypeCode.String" || res.type.StartsWith("System.String"))
                     {
                         string content = (string) rr.GetObject(res);
                         content = FixStr(content);
@@ -1331,12 +1331,12 @@ namespace ILRepacking
         {
             foreach (SecurityDeclaration sec in input)
             {
-                SecurityDeclaration newSec;
+                SecurityDeclaration newSec = null;
                 if (PermissionsetHelper.IsXmlPermissionSet(sec))
                 {
                     newSec = PermissionsetHelper.Xml2PermissionSet(sec, TargetAssemblyMainModule);
                 }
-                else
+                if (newSec == null)
                 {
                     newSec = new SecurityDeclaration(sec.Action);
                     foreach (SecurityAttribute sa in sec.SecurityAttributes)
@@ -1849,7 +1849,7 @@ namespace ILRepacking
             {
                 INFO("Merging " + type);
             }
-            else if (!type.IsPublic)
+            else if (!type.IsPublic || internalize)
             {
                 // rename it
                 string other = "<" + Guid.NewGuid() + ">" + type.Name;
@@ -1864,7 +1864,7 @@ namespace ILRepacking
             else
             {
                 ERROR("Duplicate type " + type);
-                throw new InvalidOperationException("Duplicate type " + type);
+                throw new InvalidOperationException("Duplicate type " + type + " from " + type.Scope + ", was also present in " + mappingHandler.GetOrigTypeModule(nt));
             }
             mappingHandler.StoreRemappedType(type, nt);
 
@@ -1959,6 +1959,16 @@ namespace ILRepacking
             if (fullName == "<Module>" || fullName == "__<Proxy>")
                 return true;
 
+            // XAML helper class, identical in all assemblies, unused within the assembly, and instanciated through reflection from the outside
+            // We could just skip them after the first one, but merging them works just fine
+            if (fullName == "XamlGeneratedNamespace.GeneratedInternalTypeHelper")
+                return true;
+
+            // Merge should be OK since member's names are pretty unique,
+            // but renaming duplicate members would be safer...
+            if (fullName == "<PrivateImplementationDetails>" && type.IsPublic)
+                return true;
+
             if (allowedDuplicateTypes.Contains(fullName))
                 return true;
 
@@ -1967,11 +1977,6 @@ namespace ILRepacking
                 top = top.DeclaringType;
             string nameSpace = top.Namespace;
             if (!String.IsNullOrEmpty(nameSpace) && allowedDuplicateNameSpaces.Any(s => s == nameSpace || nameSpace.StartsWith(s + ".")))
-                return true;
-
-            // Merge should be OK since member's names are pretty unique,
-            // but renaming duplicate members would be safer...
-            if (fullName == "<PrivateImplementationDetails>" && type.IsPublic)
                 return true;
 
             return false;
