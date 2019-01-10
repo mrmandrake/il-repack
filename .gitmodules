@@ -1,0 +1,3 @@
+[submodule "deps/cecil"]
+	path = deps/cecil
+	url = https://github.com/peters/cecil.git
