@@ -1,8 +1,17 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>netcoreapp2.2;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>netcoreapp2.1;netstandard2.0;net40</TargetFrameworks>
     <RootNamespace>Confuser.Renamer.BAML</RootNamespace>
     <AssemblyName>BamlParser</AssemblyName>
     <Platforms>AnyCPU</Platforms>
+	<IsNetFullFramework Condition="$(TargetFramework.Contains('netstandard')) OR $(TargetFramework.Contains('netcoreapp'))">false</IsNetFullFramework>
+	<IsNetFullFramework Condition="'$(IsNetFullFramework)' == ''">true</IsNetFullFramework>
   </PropertyGroup>
+  <ItemGroup Condition="$(TargetFramework.Contains('netstandard'))">
+	<PackageReference Include="Microsoft.CSharp" Version="4.5.0" /> 
+  </ItemGroup>
+  <ItemGroup Condition="'$(IsNetFullFramework)' == 'true'">
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System" />
+  </ItemGroup>
 </Project> 

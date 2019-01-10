@@ -1,7 +1,7 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netcoreapp2.2;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>netcoreapp2.1;netstandard2.0;net40</TargetFrameworks>
     <AssemblyName>Fasterflect.Netstandard</AssemblyName>
     <PackageId>Fasterflect.Netstandard</PackageId>
     <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
@@ -15,6 +15,9 @@
     <RepositoryUrl>https://github.com/HelloKitty/fasterflect</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>fasterflect netstandard faster flect net standard netcore core port</PackageTags>
+	<Platforms>AnyCPU</Platforms>
+	<IsNetFullFramework Condition="$(TargetFramework.Contains('netstandard')) OR $(TargetFramework.Contains('netcoreapp'))">false</IsNetFullFramework>
+	<IsNetFullFramework Condition="'$(IsNetFullFramework)' == ''">true</IsNetFullFramework>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|netstandard1.5|AnyCPU'">
@@ -29,17 +32,8 @@
     <PackageReference Include="System.Reflection.Emit.Lightweight" Version="4.3.0" />
   </ItemGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net45' ">
+  <ItemGroup Condition="'$(IsNetFullFramework)' == 'true'">
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System" />
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net46' ">
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System" />
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net35' ">
     <Reference Include="System" />
   </ItemGroup>
 

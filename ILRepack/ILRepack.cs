@@ -347,7 +347,9 @@ namespace ILRepacking
                 
                 var parameters = new WriterParameters
                 {
+                    #if ISNETFULLFRAMEWORK
                     StrongNameKeyPair = signingStep.KeyPair,
+                    #endif
                     WriteSymbols = Options.DebugInfo && PrimaryAssemblyMainModule.SymbolReader != null,
                     SymbolWriterProvider = PrimaryAssemblyMainModule.SymbolReader?.GetWriterProvider(),
                 };

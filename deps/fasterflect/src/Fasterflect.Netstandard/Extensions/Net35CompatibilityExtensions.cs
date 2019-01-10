@@ -11,7 +11,7 @@ namespace Fasterflect
 	/// </summary>
 	public static class Net35CompatibilityExtensions
 	{
-#if NET35
+#if NET35 || NET40
 		/// <summary>
 		/// A net35 extension that fills out GetTypeInfo for net35.
 		/// </summary>
