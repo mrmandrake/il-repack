@@ -16,7 +16,7 @@ namespace ILRepacking
         static int Main(string[] args)
         {
             // Uncomment to debug ILRepack.exe on Windows.
-            // NativeMethodsWindows.MessageBox(IntPtr.Zero, "DEBUG", null, 0);
+            //NativeMethodsWindows.MessageBox(IntPtr.Zero, "DEBUG", null, 0);
 
             RepackLogger logger = new RepackLogger();
             RepackOptions options = new RepackOptions(args);
