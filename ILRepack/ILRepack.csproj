@@ -3,10 +3,13 @@
     <TargetFrameworks>netcoreapp2.1;netstandard2.0;net40</TargetFrameworks>
     <RootNamespace>ILRepacking</RootNamespace>
     <AssemblyName>ILRepack</AssemblyName>
-	<StartupObject Condition="'$(OutputType)' == 'Exe'">ILRepacking.Application</StartupObject>
-	<IsNetFullFramework Condition="$(TargetFramework.Contains('netstandard')) OR $(TargetFramework.Contains('netcoreapp'))">false</IsNetFullFramework>
-	<IsNetFullFramework Condition="'$(IsNetFullFramework)' == ''">true</IsNetFullFramework>
-	<DefineConstants Condition="'$(IsNetFullFramework)' == 'true'">$(DefineConstants);ISNETFULLFRAMEWORK;</DefineConstants>
+    <OutputType Condition="'$(ILRepackExe)' != 'true'">Library</OutputType>
+    <OutputType Condition="'$(ILRepackExe)' == 'true'">Exe</OutputType>
+    <StartupObject Condition="'$(ILRepackExe)' == 'true'">ILRepacking.Application</StartupObject>
+    <IsNetFullFramework Condition="$(TargetFramework.Contains('netstandard')) OR $(TargetFramework.Contains('netcoreapp'))">false</IsNetFullFramework>
+    <IsNetFullFramework Condition="'$(IsNetFullFramework)' == ''">true</IsNetFullFramework>
+    <DefineConstants Condition="'$(IsNetFullFramework)' == 'true'">$(DefineConstants);ISNETFULLFRAMEWORK;</DefineConstants>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
   </PropertyGroup>
   <ItemGroup Condition="'$(IsNetFullFramework)' == 'true'">
     <PackageReference Include="Mono.Posix" Version="4.0.0" />
@@ -17,6 +20,12 @@
   <ItemGroup Condition="'$(IsNetFullFramework)' == 'true'">
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(ILRepackExe)'=='true'">
+    <PackageReference Include="sourcelink" Version="1.1.0">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <EmbeddedResource Include="$(USERPROFILE)\.nuget\packages\sourcelink\1.1.0\tools\pdbstr.exe"></EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\deps\bamlparser\BamlParser.csproj" />

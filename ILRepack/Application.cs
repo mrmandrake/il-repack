@@ -1,13 +1,23 @@
 ﻿using ILRepacking.Steps;
 using System;
+using System.Runtime.InteropServices;
 
 namespace ILRepacking
 {
+    internal class NativeMethodsWindows
+    {
+        [DllImport("user32.dll", CharSet=CharSet.Auto)]
+        public static extern IntPtr MessageBox(IntPtr hWnd, string text, string caption, uint type);
+    }
+
     internal class Application
     {
         [STAThread]
         static int Main(string[] args)
         {
+            // Uncomment to debug ILRepack.exe on Windows.
+            // NativeMethodsWindows.MessageBox(IntPtr.Zero, "DEBUG", null, 0);
+
             RepackLogger logger = new RepackLogger();
             RepackOptions options = new RepackOptions(args);
             int returnCode = -1;
