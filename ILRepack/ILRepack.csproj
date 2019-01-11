@@ -12,6 +12,7 @@
     <IsNetFullFramework Condition="'$(IsNetFullFramework)' == ''">true</IsNetFullFramework>
     <DefineConstants Condition="'$(IsNetFullFramework)' == 'true'">$(DefineConstants);ISNETFULLFRAMEWORK;</DefineConstants>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <IsPackable>false</IsPackable>
   </PropertyGroup>
   <ItemGroup Condition="'$(IsNetFullFramework)' == 'true'">
     <PackageReference Include="Mono.Posix" Version="4.0.0" />

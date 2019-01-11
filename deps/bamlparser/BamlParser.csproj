@@ -6,14 +6,15 @@
     <RootNamespace>Confuser.Renamer.BAML</RootNamespace>
     <AssemblyName>BamlParser</AssemblyName>
     <Platforms>AnyCPU</Platforms>
-	<IsNetFullFramework Condition="$(TargetFramework.Contains('netstandard')) OR $(TargetFramework.Contains('netcoreapp'))">false</IsNetFullFramework>
-	<IsNetFullFramework Condition="'$(IsNetFullFramework)' == ''">true</IsNetFullFramework>
+    <IsPackable>false</IsPackable>
+    <IsNetFullFramework Condition="$(TargetFramework.Contains('netstandard')) OR $(TargetFramework.Contains('netcoreapp'))">false</IsNetFullFramework>
+    <IsNetFullFramework Condition="'$(IsNetFullFramework)' == ''">true</IsNetFullFramework>
   </PropertyGroup>
   <ItemGroup Condition="$(TargetFramework.Contains('netstandard'))">
-	<PackageReference Include="Microsoft.CSharp" Version="4.5.0" /> 
+    <PackageReference Include="Microsoft.CSharp" Version="4.5.0" />
   </ItemGroup>
   <ItemGroup Condition="'$(IsNetFullFramework)' == 'true'">
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
   </ItemGroup>
-</Project> 
+</Project>
