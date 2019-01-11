@@ -1,6 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>netcoreapp2.1;netstandard2.0;net40</TargetFrameworks>
+    <!-- Support compiling on macOS and Linux because .NET Framework is not available -->
+    <TargetFrameworks Condition="$(OS) != 'Windows_NT'">netcoreapp2.1</TargetFrameworks>
     <RootNamespace>Confuser.Renamer.BAML</RootNamespace>
     <AssemblyName>BamlParser</AssemblyName>
     <Platforms>AnyCPU</Platforms>
