@@ -1,8 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>netcoreapp2.1;netstandard2.0;net40</TargetFrameworks>
-    <!-- Support compiling on macOS and Linux because .NET Framework is not available -->
-    <TargetFrameworks Condition="$(OS) != 'Windows_NT'">netcoreapp2.1</TargetFrameworks>
+    <TargetFrameworks Condition="$([MSBuild]::IsOsPlatform('Windows'))">netcoreapp2.1;netstandard2.0;net40</TargetFrameworks>
+    <TargetFrameworks Condition="!$([MSBuild]::IsOsPlatform('Windows'))">netcoreapp2.1;netstandard2.0</TargetFrameworks>
     <RootNamespace>ILRepacking</RootNamespace>
     <AssemblyName>ILRepack</AssemblyName>
     <OutputType Condition="'$(ILRepackExe)' != 'true'">Library</OutputType>
@@ -13,6 +12,7 @@
     <DefineConstants Condition="'$(IsNetFullFramework)' == 'true'">$(DefineConstants);ISNETFULLFRAMEWORK;</DefineConstants>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <IsPackable>false</IsPackable>
+    <IsTestProject>false</IsTestProject>
   </PropertyGroup>
   <ItemGroup Condition="'$(IsNetFullFramework)' == 'true'">
     <PackageReference Include="Mono.Posix" Version="4.0.0" />
@@ -28,11 +28,13 @@
     <PackageReference Include="sourcelink" Version="1.1.0">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <EmbeddedResource Include="$(USERPROFILE)\.nuget\packages\sourcelink\1.1.0\tools\pdbstr.exe"></EmbeddedResource>
+    <EmbeddedResource Include="$(NuGetPackageRoot)sourcelink/1.1.0/tools/pdbstr.exe"></EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\deps\bamlparser\BamlParser.csproj" />
     <ProjectReference Include="..\deps\cecil\Mono.Cecil.csproj" />
-    <ProjectReference Include="..\deps\fasterflect\src\Fasterflect.Netstandard\Fasterflect.Netstandard.csproj" />
+    <ProjectReference Include="..\deps\fasterflect\Fasterflect.Netstandard.csproj" />
+    <!-- Marks all packages as 'local only' so they don't end up in the nuspec. -->
+    <PackageReference Update="@(PackageReference)" PrivateAssets="All" />
   </ItemGroup>
 </Project>

@@ -51,7 +51,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BamlParser", "deps\bamlpars
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mono.Cecil", "deps\cecil\Mono.Cecil.csproj", "{D228F3BE-0DE0-4213-9DB9-DD009513307D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fasterflect.Netstandard", "deps\fasterflect\src\Fasterflect.Netstandard\Fasterflect.Netstandard.csproj", "{DD646A0A-0D65-425F-BA05-B9A3B76E7E81}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fasterflect.Netstandard", "deps\fasterflect\Fasterflect.Netstandard.csproj", "{DD646A0A-0D65-425F-BA05-B9A3B76E7E81}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
