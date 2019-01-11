@@ -266,6 +266,15 @@ namespace ILRepacking
             PrintRepackHeader();
 
             var actualOutFile = Options.OutputFile;
+            var actualOutFileContainsSlashes = new[] {"\\", "/"}.Any(x => actualOutFile.Contains(x));
+            if (!actualOutFileContainsSlashes 
+                && Options.InputAssemblies != null
+                && Options.InputAssemblies.Length > 0
+                && !string.IsNullOrWhiteSpace(Options.InputAssemblies[0]))
+            {
+                var primaryAssemblyDirectory = Path.GetDirectoryName(Options.InputAssemblies[0]);                
+                actualOutFile = Options.OutputFile = Path.Combine(primaryAssemblyDirectory, actualOutFile);
+            }
             Options.OutputFile = GetTempFile(Options.OutputFile);
             _reflectionHelper = new ReflectionHelper(this);
             ResolveSearchDirectories();
