@@ -42,7 +42,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="..\..\..\build\ilrepack\windows\ilrepack.exe" Pack="true" PackagePath="tools\" CopyToOutputDirectory="Always" Condition="'$(OsPlatform)' == 'Windows'" />
+    <Content Include="..\..\..\build\ilrepack\windows\ilrepack.exe" Pack="true" PackagePath="tools\" CopyToOutputDirectory="Always" Condition="'$(ILRepackPackForRelease)' == 'true' AND '$(OsPlatform)' == 'Windows'" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(IsNetFullFramework)' == 'true'">
@@ -80,28 +80,21 @@
     <ProjectReference Update="@(ProjectReference)" PrivateAssets="All" />
   </ItemGroup>
 
-  <Target Name="ILRepackThisAssembly" AfterTargets="Build" Condition="'$(PackageForRelease)' == 'true'">
+  <Target Name="ILRepackThisAssembly" AfterTargets="Build" Condition="'$(ILRepackPackForRelease)' == 'true' AND '$(OsPlatform)' == 'Windows' ">
 
     <PropertyGroup> 
-      <InputAssemblies Condition="'$(IsNetFullFramework)' == 'true'">
+      <InputAssemblies>
         bamlparser.dll 
         fasterflect.netstandard.dll 
         mono.cecil.dll 
       </InputAssemblies>
-      <InputAssemblies Condition="$(TargetFramework.Contains('netstandard'))">
-        bamlparser.dll 
-        fasterflect.netstandard.dll 
-        mono.cecil.dll
-      </InputAssemblies>
-      <InputAssemblies Condition="$(TargetFramework.Contains('netcoreapp'))">
-        bamlparser.dll 
-        fasterflect.netstandard.dll 
-        mono.cecil.dll
-      </InputAssemblies>
       <WorkingDirectory>$(OutputPath)</WorkingDirectory>
     </PropertyGroup>
 
-    <Exec IgnoreExitCode="true" WorkingDirectory="$(WorkingDirectory)" Command="ilrepack.exe /target:library $(AssemblyName).dll $([System.Text.RegularExpressions.Regex]::Replace( $(InputAssemblies), '\r\n', ' ' ) ) /out:./$(AssemblyName).dll" />
+    <Exec
+      IgnoreExitCode="true" 
+      WorkingDirectory="$(WorkingDirectory)" 
+      Command="ilrepack.exe /target:library $(AssemblyName).dll $([System.Text.RegularExpressions.Regex]::Replace( $(InputAssemblies), '\r\n', ' ' ) ) /out:./$(AssemblyName).dll" />
     
   </Target>
 </Project>
