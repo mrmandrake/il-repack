@@ -1,7 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks Condition="'$(TargetFrameworks)' == '' AND $([MSBuild]::IsOsPlatform('Windows'))">netcoreapp2.1;netstandard2.0;net40</TargetFrameworks>
-    <TargetFrameworks Condition="'$(TargetFrameworks)' == '' AND !$([MSBuild]::IsOsPlatform('Windows'))">netcoreapp2.2;netstandard2.0</TargetFrameworks>
+    <OsPlatform Condition="$([MSBuild]::IsOsPlatform('Windows'))">Windows</OsPlatform>
+    <OsPlatform Condition="'$(OsPlatform)' == '' AND !$([MSBuild]::IsOsPlatform('Windows'))">Unix</OsPlatform>
+    <TargetFrameworks Condition="'$(TargetFrameworks)' == '' AND '$(OsPlatform)' == 'Windows'">netcoreapp2.1;netstandard2.0;net40</TargetFrameworks>
+    <TargetFrameworks Condition="'$(TargetFrameworks)' == '' AND '$(OsPlatform)' == 'Unix'">netcoreapp2.2;netstandard2.0</TargetFrameworks>
     <RootNamespace>ILRepacking</RootNamespace>
     <AssemblyName>ILRepack</AssemblyName>
     <OutputType Condition="'$(ILRepackExe)' != 'true'">Library</OutputType>
@@ -11,34 +13,95 @@
     <IsNetFullFramework Condition="'$(IsNetFullFramework)' == ''">true</IsNetFullFramework>
     <DefineConstants Condition="'$(IsNetFullFramework)' == 'true'">$(DefineConstants);ISNETFULLFRAMEWORK;</DefineConstants>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-    <IsPackable>false</IsPackable>
+    <IsPackable>true</IsPackable>
     <IsTestProject>false</IsTestProject>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <NoPackageAnalysis>true</NoPackageAnalysis>
+    <LangVersion>7.3</LangVersion>
+    <PackageOutputPath>c:\nupkgs</PackageOutputPath>
+    <!-- nuspec -->
+    <PackageId>ILRepack.NETStandard</PackageId>
+    <Title>ILRepack - Open-source alternative to ILMerge</Title>
+    <Description>ILRepack is meant at replacing ILMerge / Mono.Merge.
+      The former being closed-source, impossible to customize, slow, resource consuming and many more. The later being deprecated, unsupported, and based on an old version of Mono.Cecil.
+      ILRepack is a utility that can be used to merge multiple .NET assemblies into a single assembly.
+    </Description>
+    <Platforms>AnyCPU</Platforms>
+    <Authors>Francois Valdy</Authors>
+    <Owners>Francois Valdy</Owners>
+    <Product>ILRepack</Product>
+    <Copyright>Copyright Francois Valdy 2011-2015</Copyright>
+    <NeutralLanguage>en-US</NeutralLanguage>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <PackageLicenseUrl>https://opensource.org/licenses/MIT</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/peters/il-repack</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/peters/il-repack.git</RepositoryUrl>
+    <PackageReleaseNotes>See $(PackageProjectUrl)/blob/master/CHANGELOG.md#v$(VersionPrefix.Replace('.','')) for release notes.</PackageReleaseNotes>
+    <RepositoryType>git</RepositoryType>
+    <!-- /nuspec -->
   </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="..\..\..\build\ilrepack\windows\ilrepack.exe" Pack="true" PackagePath="tools\" CopyToOutputDirectory="Always" Condition="'$(OsPlatform)' == 'Windows'" />
+  </ItemGroup>
+
   <ItemGroup Condition="'$(IsNetFullFramework)' == 'true'">
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
   </ItemGroup>
-  <ItemGroup  Condition="'$(TargetFrameworks)' == 'netstandard2.0' AND !$([MSBuild]::IsOsPlatform('Windows'))">
+
+  <ItemGroup Condition="'$(TargetFrameworks)' == 'netstandard2.0' AND !$([MSBuild]::IsOsPlatform('Windows'))">
     <PackageReference Include="system.linq" Version="4.3.0">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
   </ItemGroup>
+
   <ItemGroup>
     <Compile Remove="build\**" />
     <EmbeddedResource Remove="build\**" />
     <None Remove="build\**" />
   </ItemGroup>
+
   <ItemGroup>
-    <PackageReference Include="sourcelink" Version="1.1.0">
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
     <EmbeddedResource Include="$(NuGetPackageRoot)sourcelink/1.1.0/tools/pdbstr.exe"></EmbeddedResource>
   </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="sourcelink" Version="1.1.0" />
+    <!-- Marks all packages as 'local only' so they don't end up in the nuspec. -->
+    <PackageReference Update="@(PackageReference)" PrivateAssets="All" />
+  </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\deps\bamlparser\BamlParser.csproj" />
     <ProjectReference Include="..\deps\cecil\Mono.Cecil.csproj" />
     <ProjectReference Include="..\deps\fasterflect\Fasterflect.Netstandard.csproj" />
     <!-- Marks all packages as 'local only' so they don't end up in the nuspec. -->
-    <PackageReference Update="@(PackageReference)" PrivateAssets="All" />
+    <ProjectReference Update="@(ProjectReference)" PrivateAssets="All" />
   </ItemGroup>
+
+  <Target Name="ILRepackThisAssembly" AfterTargets="Build" Condition="'$(PackageForRelease)' == 'true'">
+
+    <PropertyGroup> 
+      <InputAssemblies Condition="'$(IsNetFullFramework)' == 'true'">
+        bamlparser.dll 
+        fasterflect.netstandard.dll 
+        mono.cecil.dll 
+      </InputAssemblies>
+      <InputAssemblies Condition="$(TargetFramework.Contains('netstandard'))">
+        bamlparser.dll 
+        fasterflect.netstandard.dll 
+        mono.cecil.dll
+      </InputAssemblies>
+      <InputAssemblies Condition="$(TargetFramework.Contains('netcoreapp'))">
+        bamlparser.dll 
+        fasterflect.netstandard.dll 
+        mono.cecil.dll
+      </InputAssemblies>
+      <WorkingDirectory>$(OutputPath)</WorkingDirectory>
+    </PropertyGroup>
+
+    <Exec IgnoreExitCode="true" WorkingDirectory="$(WorkingDirectory)" Command="ilrepack.exe /target:library $(AssemblyName).dll $([System.Text.RegularExpressions.Regex]::Replace( $(InputAssemblies), '\r\n', ' ' ) ) /out:./$(AssemblyName).dll" />
+    
+  </Target>
 </Project>
