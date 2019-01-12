@@ -15,12 +15,6 @@
     <IsTestProject>false</IsTestProject>
   </PropertyGroup>
   <ItemGroup Condition="'$(IsNetFullFramework)' == 'true'">
-    <PackageReference Include="Mono.Posix" Version="4.0.0" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(IsNetFullFramework)' != 'true'">
-    <PackageReference Include="Mono.Posix.NETStandard" Version="1.0.0" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(IsNetFullFramework)' == 'true'">
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
   </ItemGroup>
