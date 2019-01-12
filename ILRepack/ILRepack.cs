@@ -25,7 +25,6 @@ using Mono.Cecil;
 using ILRepacking.Mixins;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Diagnostics;
-using ILRepacking.AnyOS.Unix;
 using ILRepacking.Steps.SourceServerData;
 using ILRepacking.Steps.Win32Resources;
 using Mono.Cecil.Cil;
@@ -378,14 +377,6 @@ namespace ILRepacking
                 MoveTempFile(Options.OutputFile, actualOutFile);
                 Options.OutputFile = actualOutFile;
 
-                // If this is an executable and we are on linux/osx we should copy file permissions from
-                // the primary assembly
-                if (isUnixEnvironment)
-                {
-                    Logger.Info("Copying permissions from " + PrimaryAssemblyFile);
-                    Syscall.stat(PrimaryAssemblyFile, out var stat);
-                    Syscall.chmod(Options.OutputFile, stat.Mode);
-                }
                 if (hadStrongName && !TargetAssemblyDefinition.Name.HasPublicKey)
                     Options.StrongNameLost = true;
 
