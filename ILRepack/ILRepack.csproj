@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks Condition="$([MSBuild]::IsOsPlatform('Windows'))">netcoreapp2.1;netstandard2.0;net40</TargetFrameworks>
-    <TargetFrameworks Condition="!$([MSBuild]::IsOsPlatform('Windows'))">netcoreapp2.1;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks Condition="'$(TargetFrameworks)' == '' AND $([MSBuild]::IsOsPlatform('Windows'))">netcoreapp2.1;netstandard2.0;net40</TargetFrameworks>
+    <TargetFrameworks Condition="'$(TargetFrameworks)' == '' AND !$([MSBuild]::IsOsPlatform('Windows'))">netcoreapp2.1;netstandard2.0</TargetFrameworks>
     <RootNamespace>ILRepacking</RootNamespace>
     <AssemblyName>ILRepack</AssemblyName>
     <OutputType Condition="'$(ILRepackExe)' != 'true'">Library</OutputType>
@@ -17,6 +17,11 @@
   <ItemGroup Condition="'$(IsNetFullFramework)' == 'true'">
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="build\**" />
+    <EmbeddedResource Remove="build\**" />
+    <None Remove="build\**" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="sourcelink" Version="1.1.0">
