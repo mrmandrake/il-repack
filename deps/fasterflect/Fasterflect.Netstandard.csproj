@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks Condition="'$(TargetFrameworks)' == '' AND $([MSBuild]::IsOsPlatform('Windows'))">netcoreapp2.1;netstandard2.0;net40</TargetFrameworks>
-    <TargetFrameworks Condition="'$(TargetFrameworks)' == '' AND !$([MSBuild]::IsOsPlatform('Windows'))">netcoreapp2.1;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks Condition="'$(TargetFrameworks)' == '' AND !$([MSBuild]::IsOsPlatform('Windows'))">netcoreapp2.2;netstandard2.0</TargetFrameworks>
     <AssemblyName>Fasterflect.Netstandard</AssemblyName>
     <PackageId>Fasterflect.Netstandard</PackageId>
     <Description>A port of Fasterflect to Netstandard.</Description>
