@@ -409,8 +409,8 @@ namespace ILRepacking
 
         private void MoveTempFile(string tempFile, string outFile)
         {
-            var srcDir = Path.GetFullPath(Path.GetDirectoryName(tempFile));
-            var tgtDir = Path.GetFullPath(Path.GetDirectoryName(outFile));
+            var srcDir = Path.GetDirectoryName(tempFile);
+            var tgtDir = Path.GetDirectoryName(outFile);
             Directory.CreateDirectory(tgtDir);
 
             foreach (var srcFileName in Directory.EnumerateFiles(srcDir))
