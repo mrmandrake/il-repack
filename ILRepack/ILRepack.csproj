@@ -43,6 +43,7 @@
 
   <ItemGroup>
     <Content Include="..\..\..\build\ilrepack\windows\ilrepack.exe" Pack="true" PackagePath="tools\" CopyToOutputDirectory="Always" Condition="'$(ILRepackPackForRelease)' == 'true' AND '$(OsPlatform)' == 'Windows'" />
+    <Content Include="..\..\..\ILRepacking.Internalize.Exclude" Pack="false" CopyToOutputDirectory="Always" Condition="'$(ILRepackPackForRelease)' == 'true' AND '$(OsPlatform)' == 'Windows'" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(IsNetFullFramework)' == 'true'">
@@ -94,7 +95,7 @@
     <Exec
       IgnoreExitCode="true" 
       WorkingDirectory="$(WorkingDirectory)" 
-      Command="ilrepack.exe /target:library $(AssemblyName).dll $([System.Text.RegularExpressions.Regex]::Replace( $(InputAssemblies), '\r\n', ' ' ) ) /out:./$(AssemblyName).dll" />
+      Command="ilrepack.exe /target:library /internalize:ILRepacking.Internalize.Exclude $(AssemblyName).dll $([System.Text.RegularExpressions.Regex]::Replace( $(InputAssemblies), '\r\n', ' ' ) ) /out:./$(AssemblyName).dll" />
     
   </Target>
 </Project>
