@@ -136,7 +136,10 @@ namespace ILRepacking.Steps.Win32Resources.PE
             WriteSectionHeaders();
             CopySection(_origText, _text);
             WriteSection(_rsrc, _win32Resources);
-            CopySection(_origReloc, _reloc);
+            if (_reloc != null)
+            {
+                CopySection(_origReloc, _reloc);
+            }
         }
 
         private void CopyBytes(int bytes)
