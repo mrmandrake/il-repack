@@ -9,7 +9,7 @@
     <OutputType Condition="'$(ILRepackExe)' != 'true'">Library</OutputType>
     <OutputType Condition="'$(ILRepackExe)' == 'true'">Exe</OutputType>
     <StartupObject Condition="'$(ILRepackExe)' == 'true'">ILRepacking.Application</StartupObject>
-    <IsNetFullFramework Condition="$(TargetFramework.Contains('netstandard')) OR $(TargetFramework.Contains('netcoreapp'))">false</IsNetFullFramework>
+    <IsNetFullFramework Condition="'$(TargetFrameworkIdentifier)' == '.NETStandard' OR '$(TargetFrameworkIdentifier)' == '.NETCoreApp'">false</IsNetFullFramework>
     <IsNetFullFramework Condition="'$(IsNetFullFramework)' == ''">true</IsNetFullFramework>
     <DefineConstants Condition="'$(IsNetFullFramework)' == 'true'">$(DefineConstants);ISNETFULLFRAMEWORK;</DefineConstants>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
@@ -79,6 +79,11 @@
     <ProjectReference Include="..\deps\fasterflect\Fasterflect.Netstandard.csproj" />
     <!-- Marks all packages as 'local only' so they don't end up in the nuspec. -->
     <ProjectReference Update="@(ProjectReference)" PrivateAssets="All" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="$(AssemblyName).IntegrationTests" />
+    <InternalsVisibleTo Include="$(AssemblyName).Tests" />
   </ItemGroup>
 
   <Target Name="ILRepackThisAssembly" AfterTargets="Build" Condition="'$(ILRepackPackForRelease)' == 'true' AND '$(OsPlatform)' == 'Windows' ">

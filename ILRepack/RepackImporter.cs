@@ -761,7 +761,7 @@ namespace ILRepacking
                 output.Add(ngp);
             }
             // delay copy to ensure all generics parameters are already present
-            Copy(input, output, (gp, ngp) => CopyTypeReferences(gp.Constraints, ngp.Constraints, nt));
+            Copy(input, output, (gp, ngp) => CopyGenericParameterConstraints(gp.Constraints, ngp.Constraints, nt));
             Copy(input, output, (gp, ngp) => CopyCustomAttributes(gp.CustomAttributes, ngp.CustomAttributes, nt));
         }
 
@@ -830,11 +830,12 @@ namespace ILRepacking
             return false;
         }
 
-        public void CopyTypeReferences(Collection<TypeReference> input, Collection<TypeReference> output, IGenericParameterProvider context)
+        public void CopyGenericParameterConstraints(Collection<GenericParameterConstraint> input, Collection<GenericParameterConstraint> output, IGenericParameterProvider context)
         {
-            foreach (TypeReference ta in input)
+            foreach (GenericParameterConstraint gpc in input)
             {
-                output.Add(Import(ta, context));
+                gpc.ConstraintType = Import(gpc.ConstraintType, context);
+                output.Add(gpc);
             }
         }
 

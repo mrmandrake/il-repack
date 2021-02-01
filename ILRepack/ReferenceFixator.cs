@@ -341,11 +341,11 @@ namespace ILRepacking
             return typeAttribute.BaseType != null && IsAnnotation(typeAttribute.BaseType.Resolve());
         }
 
-        private void FixReferences(Collection<TypeReference> refs)
+        private void FixReferences(Collection<GenericParameterConstraint> refs)
         {
             for (int i = 0; i < refs.Count; i++)
             {
-                refs[i] = Fix(refs[i]);
+                refs[i].ConstraintType = Fix(refs[i].ConstraintType);
             }
         }
 

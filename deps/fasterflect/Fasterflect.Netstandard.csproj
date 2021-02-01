@@ -14,7 +14,7 @@
     <RepositoryType>git</RepositoryType>
     <PackageTags>fasterflect netstandard faster flect net standard netcore core port</PackageTags>
     <Platforms>AnyCPU</Platforms>
-    <IsNetFullFramework Condition="$(TargetFramework.Contains('netstandard')) OR $(TargetFramework.Contains('netcoreapp'))">false</IsNetFullFramework>
+    <IsNetFullFramework Condition="'$(TargetFrameworkIdentifier)' == '.NETStandard' OR '$(TargetFrameworkIdentifier)' == '.NETCoreApp'">false</IsNetFullFramework>
     <IsNetFullFramework Condition="'$(IsNetFullFramework)' == ''">true</IsNetFullFramework>
     <IsPackable>false</IsPackable>
     <IsTestProject>false</IsTestProject>

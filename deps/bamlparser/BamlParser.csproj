@@ -7,10 +7,10 @@
     <Platforms>AnyCPU</Platforms>
     <IsPackable>false</IsPackable>
     <IsTestProject>false</IsTestProject>
-    <IsNetFullFramework Condition="$(TargetFramework.Contains('netstandard')) OR $(TargetFramework.Contains('netcoreapp'))">false</IsNetFullFramework>
+    <IsNetFullFramework Condition="'$(TargetFrameworkIdentifier)' == '.NETStandard' OR '$(TargetFrameworkIdentifier)' == '.NETCoreApp'">false</IsNetFullFramework>
     <IsNetFullFramework Condition="'$(IsNetFullFramework)' == ''">true</IsNetFullFramework>
   </PropertyGroup>
-  <ItemGroup Condition="$(TargetFramework.Contains('netstandard'))">
+  <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETStandard'">
     <PackageReference Include="Microsoft.CSharp" Version="4.5.0" />
   </ItemGroup>
   <ItemGroup Condition="'$(IsNetFullFramework)' == 'true'">
