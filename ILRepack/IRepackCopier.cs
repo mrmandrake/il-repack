@@ -35,6 +35,6 @@ namespace ILRepacking
 
         void CopyCustomAttributes(Collection<CustomAttribute> input, Collection<CustomAttribute> output, bool allowMultiple, IGenericParameterProvider context);
 
-        void CopyTypeReferences(Collection<TypeReference> input, Collection<TypeReference> output, IGenericParameterProvider context);
+        void CopyGenericParameterConstraints(Collection<GenericParameterConstraint> input, Collection<GenericParameterConstraint> output, IGenericParameterProvider context);
     }
 }
