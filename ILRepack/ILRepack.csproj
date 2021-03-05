@@ -84,6 +84,7 @@
   <ItemGroup>
     <InternalsVisibleTo Include="$(AssemblyName).IntegrationTests" />
     <InternalsVisibleTo Include="$(AssemblyName).Tests" />
+    <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
   </ItemGroup>
 
   <Target Name="ILRepackThisAssembly" AfterTargets="Build" Condition="'$(ILRepackPackForRelease)' == 'true' AND '$(OsPlatform)' == 'Windows' ">
